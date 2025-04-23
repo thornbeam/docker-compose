@@ -1,0 +1,44 @@
+services:
+  db:
+    image: mariadb:lts
+    command: --transaction-isolation=READ-COMMITTED
+    restart: unless-stopped
+    volumes:
+      - db:/var/lib/mysql
+    env_file:
+      - .env
+
+  redis:
+    image: redis:alpine
+    restart: unless-stopped
+
+  app:
+    image: nextcloud:apache
+    restart: unless-stopped
+    depends_on:
+      - redis
+      - db
+    volumes:
+      - nextcloud:/var/www/html
+      - /path/to/file:/path/to/file
+    environment:
+      - MYSQL_HOST=db
+      - REDIS_HOST=redis
+    env_file:
+      - .env
+    ports:
+      - 8090:80
+
+  cron:
+    image: nextcloud:apache
+    restart: unless-stopped
+    depends_on:
+      - redis
+      - db
+    volumes:
+      - nextcloud:/var/www/html
+    entrypoint: /cron.sh
+
+volumes:
+  nextcloud:
+  db:
