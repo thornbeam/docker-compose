@@ -13,7 +13,6 @@ services:
         source: /path/to/music
         target: /Music
         read_only: true
-    restart: 'unless-stopped'
     # Optional - alternative address used for autodiscovery
     environment:
       - JELLYFIN_PublishedServerUrl=http://example.com
